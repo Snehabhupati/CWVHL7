@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CareEpisodeID__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>CareEpisode Name</label>
+    <referenceTo>ElixirSuite__Visits__c</referenceTo>
+    <relationshipLabel>HL7_Staging</relationshipLabel>
+    <relationshipName>HL7_Visit</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
