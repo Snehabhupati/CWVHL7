@@ -69,11 +69,17 @@ public class HL7SegmentEncoderEVN {
             {
                 EVN='';
                 //ExceptionLog.logDebugString('Unable to generate EVN message due to required fields missing:Trigger Event ');
+                ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+            objExp.ElixirSuite__Stack_Trace_Long__c = 'Unable to generate EVN message due to required fields missing:Trigger Event ';
+            Insert objExp;
             }
             System.debug('EVN '+EVN);
             return EVN +'\n';
         } catch (Exception e) {         
             //ExceptionLog.logDebugString('Exception occurred in HL7 EVN Segment: ' + e.getMessage());  
+            ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+            objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 EVN Segment:'+ e.getMessage();
+            Insert objExp;
             System.debug('Exception occurred in HL7 EVN Segment: ' + e.getMessage());      
             return '';
         }

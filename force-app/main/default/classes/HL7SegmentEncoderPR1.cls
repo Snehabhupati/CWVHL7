@@ -1,12 +1,12 @@
 public class HL7SegmentEncoderPR1 {
-    public static String generatePR1Segment(String accountId) {
+    public static String generatePR1Segment(String accountId, String visitId ) {
         String strPR1 ='';
         try{ 
             // List<ElixirSuite__Procedure__c> objProcedureList = HL7GeneralUtil.getPatientProcedure(accountId);
             Account objAccount = HL7GeneralUtil.getAccount(accountId);
             List<ElixirSuite__Procedure__c> objProcedureList = new List<ElixirSuite__Procedure__c>();
-            if (HL7GeneralUtil.getPatientProcedure(accountId).size() > 0) {
-                objProcedureList = HL7GeneralUtil.getPatientProcedure(accountId);
+            if (HL7GeneralUtil.getPatientProcedure(accountId, visitId).size() > 0) {
+                objProcedureList = HL7GeneralUtil.getPatientProcedure(accountId, visitId);
             }
             for(integer i = 0; i < objProcedureList.size(); i++){
                 strPR1 += generatePR1SegmentRecord(i+1, objProcedureList[i]) + '\n';

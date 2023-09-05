@@ -86,6 +86,9 @@ global with sharing class HL7SegmentEncoderMSH {
             return strMSH + '\n';
         } catch (Exception e) {
             //   ExceptionLog.logDebugString('Exception occurred in HL7 MSH Segment: ' + e.getMessage());
+            ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+            objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 MSH Segment:'+ e.getMessage();
+            Insert objExp;
             System.debug('Exception occurred in HL7 MSH Segment: ' + e.getMessage());
             return ''; 
         } 

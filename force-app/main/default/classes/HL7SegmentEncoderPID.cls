@@ -139,6 +139,9 @@ public class HL7SegmentEncoderPID {
         } catch (Exception e) {
             // Log the exception if needed
             System.debug('Exception occurred in HL7 PID Segment: ' + e.getMessage());
+            ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+            objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 PID Segment:'+ e.getMessage();
+            Insert objExp;
             // ExceptionLog.logDebugString('Exception occurred in HL7 PID Segment: ' + e.getMessage());
             return '';
         }

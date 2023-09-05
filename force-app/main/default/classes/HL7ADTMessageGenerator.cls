@@ -1,4 +1,4 @@
-public class VisitHandler {
+public class HL7ADTMessageGenerator {
     public static String getADTMessage(String accountId, String visitId, String messageType) {
         String strMSH='';
         String strEVN='';
