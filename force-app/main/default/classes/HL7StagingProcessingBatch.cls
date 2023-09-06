@@ -4,8 +4,7 @@ public class HL7StagingProcessingBatch implements Database.Batchable<sObject>, D
         System.debug('query '+query);
         return Database.getQueryLocator(query);
     }   
-    
-      
+
     public class accessTokenWrapper{
         public String access_token;
         public String instance_url;
@@ -47,9 +46,9 @@ public class HL7StagingProcessingBatch implements Database.Batchable<sObject>, D
             record.Processed_Date__c = System.now();
         }
         
-        HL7StagingProcessingBatch.generateAccessToken();
+        accessTokenWrapper objAccecc = HL7StagingProcessingBatch.generateAccessToken();
         
-        accessTokenWrapper objAccecc = generateAccessToken();
+       //  = generateAccessToken();
         
         system.debug('objAccecc-'+objAccecc);
         system.debug('objAccecc.access_token-'+objAccecc.access_token);

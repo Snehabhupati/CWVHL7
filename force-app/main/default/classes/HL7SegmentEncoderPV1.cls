@@ -17,9 +17,9 @@ public class HL7SegmentEncoderPV1 {
                 careEpisode = HL7GeneralUtil.getCareEpisode(accountId, visitId);
             }
             
-            List<Sender_MetaData__mdt> mdtFacility = HL7GeneralUtil.getSendingFacility();
-            if (mdtFacility.size() > 0) {
-                sendFacility = mdtFacility[0].value__c;
+            String  mdtFacility = HL7CodeMappings.SendingFacility;
+            if (mdtFacility != null) {
+                sendFacility = mdtFacility;
             }
             
             if (careEpisode != null && careEpisode.size() > 0) {
@@ -108,8 +108,9 @@ public class HL7SegmentEncoderPV1 {
         } catch (Exception e) {
             // Log the exception if needed
             System.Debug('Exception Message in PV1'+e.getMessage());
-          //  ExceptionLog.logDebugString('Exception occurred in HL7 PV1 Segment: ' + e.getMessage());
-            // Return an empty string
+          ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+            objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 PV1 Segment:'+ e.getMessage();
+            Insert objExp;
             return '';
         }
     }

@@ -5,6 +5,7 @@ public class HL7SegmentEncoderPR1 {
             // List<ElixirSuite__Procedure__c> objProcedureList = HL7GeneralUtil.getPatientProcedure(accountId);
             Account objAccount = HL7GeneralUtil.getAccount(accountId);
             List<ElixirSuite__Procedure__c> objProcedureList = new List<ElixirSuite__Procedure__c>();
+            
             if (HL7GeneralUtil.getPatientProcedure(accountId, visitId).size() > 0) {
                 objProcedureList = HL7GeneralUtil.getPatientProcedure(accountId, visitId);
             }

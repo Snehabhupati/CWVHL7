@@ -38,7 +38,7 @@ public class HL7ADTMessageGenerator {
             System.debug('Exception occurred in HL7 IN1 Segment:'+ ex.getMessage());
         }
         try{
-            strPR1 = HL7SegmentEncoderPR1.generatePR1Segment(accountId);
+            strPR1 = HL7SegmentEncoderPR1.generatePR1Segment(accountId,visitId);
         } catch (Exception ex) {
             System.debug('Exception occurred in HL7 PR1 Segment:'+ ex.getMessage());
         }

@@ -6,76 +6,13 @@ Company: Mirketa Inc
 
 public class HL7GeneralUtil {
     
-    //Metadata = Sending Applications
-    public static list<Sender_MetaData__mdt> getSendingApplication(){
-        List<Sender_MetaData__mdt> mdt = [select id, label, value__c 
-                                          from Sender_MetaData__mdt 
-                                          Where Label='Sending Application' WITH SECURITY_ENFORCED Limit 1];
-        
-        return mdt;
-    }
-    
-    //Metadata = Sending Facility
-    public static list<Sender_MetaData__mdt> getSendingFacility(){
-        List<Sender_MetaData__mdt> mdt = [select id, label, value__c 
-                                          from Sender_MetaData__mdt 
-                                          Where Label='Sending Facility' WITH SECURITY_ENFORCED Limit 1];
-        return mdt;
-    } 
-    
+   
     //Setup -> Company Information
     public static Organization getCompanyInformation(){
         Organization cmpInfo = [SELECT Id, Name,Phone,LanguageLocaleKey,Street, City, State, PostalCode, Country FROM Organization WITH SECURITY_ENFORCED Limit 1];
         return cmpInfo;
     }
-    
-    //Gender Code
-    public static string getGenderCodes(String genderCode) {
-        List<Gender_Codes__mdt> mdt = [select label, Code__c 
-                                       from Gender_Codes__mdt 
-                                       Where Label=:genderCode WITH SECURITY_ENFORCED Limit 1];
-        if(mdt.size()>0){
-            return mdt[0].Code__c;
-        } else {
-            return '';
-        }                  
-    }
-    
-   /* //NK's Relationship
-    public static string getRelationshipCodes(String strRelationship) {
-        List<Relationship_Codes__mdt> mdt = [select label, Code__c 
-                                             from Relationship_Codes__mdt 
-                                             Where Label=:strRelationship WITH SECURITY_ENFORCED Limit 1];
-        if(mdt.size()>0){
-            return mdt[0].Code__c;
-        } else {
-            return '';
-        }
-    }*/
-    
-    //Pass country and get the Code
-    public static String getCountryCodes(String country) {
-        List<Country_Codes__mdt> mdtCode = new List<Country_Codes__mdt>();
-        List<Country_Codes__mdt> mdtLabel = new List<Country_Codes__mdt>();
-        if (country != null) {
-            //Searching the code in both Label and Code__c
-            mdtCode = [SELECT Label, Code__c
-                       FROM Country_Codes__mdt
-                       WHERE Code__c = :country WITH SECURITY_ENFORCED Limit 1];
-            mdtLabel = [SELECT Label, Code__c
-                        FROM Country_Codes__mdt
-                        WHERE Label = :country WITH SECURITY_ENFORCED Limit 1];
-        }
-        
-        if (!mdtCode.isEmpty()) {
-            
-            return mdtCode[0].Code__c;
-        } else if (!mdtLabel.isEmpty()) {
-            return mdtLabel[0].Code__c;
-        } else {
-            return '';
-        }
-    }
+  
     
     //Get the right trigger event (e.g. A01=Admin, A03=Discharge)
     public static string getTriggerEvent(String accountId, String visitId){
@@ -200,14 +137,15 @@ public class HL7GeneralUtil {
     }
     
     //Get Medical Coding Procedure for Patient (PR)
-    Public static List<ElixirSuite__Procedure__c> getPatientProcedure(String accountId){
+    Public static List<ElixirSuite__Procedure__c> getPatientProcedure(String accountId, String visitId){
         List<ElixirSuite__Procedure__c> patientProcedure =[ Select Id, Name, ElixirSuite__Code_Description__c, ElixirSuite__From_Date_of_Service__c,
                                                            ElixirSuite__To_Date_of_Service__c, ElixirSuite__Code_Category__c,
                                                            ElixirSuite__Modifier1__r.Name,ElixirSuite__Modifier1__r.ElixirSuite__Code_Description__c, ElixirSuite__Modifier2__r.Name, ElixirSuite__Modifier2__r.ElixirSuite__Code_Description__c,
                                                            ElixirSuite__Modifier3__r.Name,ElixirSuite__Modifier3__r.ElixirSuite__Code_Description__c, ElixirSuite__Modifier4__r.Name,ElixirSuite__Modifier4__r.ElixirSuite__Code_Description__c,
                                                            CreatedBy.LastName , CreatedBy.PostalCode, CreatedBy.Profile.Name, CreatedBy.FirstName , CreatedBy.CompanyName , CreatedBy.City ,CreatedBy.State , CreatedBy.Street , CreatedBy.Country ,CreatedBy.Phone, CreatedBy.Address
-                                                           FROM ElixirSuite__Procedure__c WHERE ElixirSuite__Code_Category__c!=null and ElixirSuite__Account__c=:accountId WITH SECURITY_ENFORCED Limit 10];
+                                                           FROM ElixirSuite__Procedure__c WHERE ElixirSuite__Code_Category__c!=null and ElixirSuite__Account__c=:accountId AND ElixirSuite__Visits__c =: visitId WITH SECURITY_ENFORCED Limit 10];
         if(patientProcedure.size()>0){
+            System.debug('patientProcedure  $$' +patientProcedure);
             return patientProcedure;
         }
         return null;
@@ -334,18 +272,6 @@ public class HL7GeneralUtil {
         return null;
     }*/
     
-    
-    //OBR Result Status
-    public static string getOBRStatus(String Status) {
-        List<OBR_ResultStatus__mdt> mdt = [select label, DeveloperName, Value__c 
-                                           from OBR_ResultStatus__mdt 
-                                           Where Value__c=:Status WITH SECURITY_ENFORCED Limit 1];
-        if(mdt.size()>0){
-            return mdt[0].label;
-        } else {
-            return null;
-        }                  
-    }
     //Get Dummy Lab Orders for an account
     Public static List<ElixirSuite__UA_Sample_Details__c> getDummyLabOrder(String accountId,String labOrderName){
         List<ElixirSuite__UA_Sample_Details__c> dummyLabOrderData =[ Select Id, Name,ElixirSuite__Medical_Test__c,

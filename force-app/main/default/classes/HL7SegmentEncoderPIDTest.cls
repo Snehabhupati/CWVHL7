@@ -18,20 +18,10 @@ private class HL7SegmentEncoderPIDTest {
             ElixirSuite__Gender__c = 'Male'
             // Set other required fields for the Account as needed
         );
+        Test.startTest();
         insert testAccount;
-
-        // Call the method being tested
         String pidSegment = HL7SegmentEncoderPID.generatePIDSegment(testAccount.Id);
+        Test.stopTest();
 
-        // Assert the expected values in the generated PID segment
-        // Add your assertions here based on the expected values in the pidSegment variable
-        // For example:
-        // System.assertEquals('PID', pidSegment.substring(0, 3)); // Assert the segment identifier is 'PID'
-        // System.assertEquals(testAccount.Id, pidSegment.split('|')[3]); // Assert the Account Id is correct
-
-        // Add more assertions as needed to cover the expected behavior
-
-        // Clean up the test data
-        delete testAccount;
     }
 }

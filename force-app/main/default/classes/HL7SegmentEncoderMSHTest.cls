@@ -1,5 +1,6 @@
 @isTest
 public class HL7SegmentEncoderMSHTest {
+    
 @isTest
     static void testGenerateMSHSegment(){
         Account acc = new Account(
@@ -25,10 +26,7 @@ public class HL7SegmentEncoderMSHTest {
         String siuMSHSegment = HL7SegmentEncoderMSH.generateMSHSegment(acc.id,objVisit.id, 'SIU');
         String oruMSHSegment = HL7SegmentEncoderMSH.generateMSHSegment(acc.id,objVisit.id, 'ORU');
         String rgvMSHSegment = HL7SegmentEncoderMSH.generateMSHSegment(acc.id,objVisit.id, 'RGV');
-        //System.assertNotEquals('', adtMSHSegment);
-//System.assertNotEquals('', omlMSHSegment);
-       // System.assertEquals(true, adtMSHSegment.contains('MSH|'));
-        //System.assertEquals(true, omlMSHSegment.contains('MSH|'));
+        
         adtMSHSegment = HL7SegmentEncoderMSH.generateMSHSegment('INVALIDID','INVALIDID','INVALIDID');
         omlMSHSegment = HL7SegmentEncoderMSH.generateMSHSegment('INVALIDID','INVALIDID','INVALIDID');
         siuMSHSegment = HL7SegmentEncoderMSH.generateMSHSegment('INVALIDID','INVALIDID','INVALIDID');

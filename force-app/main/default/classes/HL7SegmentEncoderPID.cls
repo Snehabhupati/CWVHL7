@@ -28,9 +28,9 @@ public class HL7SegmentEncoderPID {
         Boolean isDeceased = objAccount.ElixirSuite__Deceased__c;
         String deceasedFlag = isDeceased ? 'Y' : 'N';
         try{
-            List<Sender_MetaData__mdt> mdtFacility = HL7GeneralUtil.getSendingFacility();
-            if(mdtFacility.size() > 0){
-                sendFacility = mdtFacility[0].value__c;
+            String mdtFacility = HL7CodeMappings.SendingFacility;
+            if(mdtFacility != null){
+                sendFacility = mdtFacility;
             }
             sendFacility =HL7HelperClass.replaceSpecialCharacters(sendFacility);
             lastName = HL7HelperClass.analyze(objAccount.ElixirSuite__Last_Name__c,194);
@@ -71,16 +71,16 @@ public class HL7SegmentEncoderPID {
             System.debug('genderValue  '+genderValue);
             String genderCode = '';
             if(genderValue == 'Female' || genderValue == 'Male'){
-                genderCode =  HL7GeneralUtil.getGenderCodes(genderValue);
+                genderCode =  HL7CodeMappings.getGenderCode(genderValue);
                 System.debug('genderCode  '+genderCode);
             }
             else{
                 genderCode = 'O';
             }
             
-            if(HL7GeneralUtil.getCountryCodes(accountId)!=null && objAccount.BillingCountry!=null){
+            if(HL7CodeMappings.getCountryCode(accountId)!=null && objAccount.BillingCountry!=null){
                 countryCode = HL7HelperClass.replaceSpecialCharacters(objAccount.BillingCountry);
-                countryCode = HL7GeneralUtil.getCountryCodes(countryCode);
+                countryCode = HL7CodeMappings.getCountryCode(countryCode);
             }
             System.debug('countryCode'+countryCode);
             
@@ -134,15 +134,14 @@ public class HL7SegmentEncoderPID {
             strPID += '|' + ''; //strain
             strPID += '|' + ''; //production class code
             strPID += '|' ; //tribal citizenship
-                        
+            
+            System.debug(strPID);             
             return strPID +'\n';
         } catch (Exception e) {
-            // Log the exception if needed
             System.debug('Exception occurred in HL7 PID Segment: ' + e.getMessage());
             ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
             objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 PID Segment:'+ e.getMessage();
             Insert objExp;
-            // ExceptionLog.logDebugString('Exception occurred in HL7 PID Segment: ' + e.getMessage());
             return '';
         }
         

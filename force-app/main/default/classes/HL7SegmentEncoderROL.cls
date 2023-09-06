@@ -31,7 +31,7 @@ public class HL7SegmentEncoderROL {
                     + HL7HelperClass.analyze((objProcedure.CreatedBy.City),0)  +'^' 
                     + HL7HelperClass.analyze((objProcedure.CreatedBy.State),0)  + '^'
                     + HL7HelperClass.analyze((objProcedure.CreatedBy.PostalCode),0) + '^' 
-                    + HL7HelperClass.analyze(HL7GeneralUtil.getCountryCodes(objProcedure.CreatedBy.Country),2) ;//ROL.11 - Office/Home Address/Birthplace
+                    + HL7HelperClass.analyze(HL7CodeMappings.getCountryCode(objProcedure.CreatedBy.Country),2) ;//ROL.11 - Office/Home Address/Birthplace
                 strRol +=  '|' + HL7HelperClass.analyze((objProcedure.CreatedBy.Phone),0);
                 strRol +=  '|' ;
                 strRol +=  '|' + HL7HelperClass.analyze((objProcedure.CreatedBy.CompanyName),0);

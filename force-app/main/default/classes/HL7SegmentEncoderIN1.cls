@@ -20,7 +20,7 @@ public class HL7SegmentEncoderIN1 {
             System.debug('strIN1'+strIN1);
             return strIN1;
         } catch (Exception e) {
-          //  ExceptionLog.logDebugString('Exception occurred in HL7 IN1 Segment: ' + e.getMessage());
+            //  ExceptionLog.logDebugString('Exception occurred in HL7 IN1 Segment: ' + e.getMessage());
             return '';
         } 
     }
@@ -43,26 +43,26 @@ public class HL7SegmentEncoderIN1 {
         String planValidDays ='';
         system.debug('city'+objInsurance.ElixirSuite__Payer__r.ElixirSuite__City__c);
         String payorStreet = HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__Address__c,0) ;
-           String payorCity =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__City__c,0) ;
-             String payorState =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__State__c,0);
-                String payorZipCode = HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__Zip_Code__c,0);
+        String payorCity =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__City__c,0) ;
+        String payorState =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__State__c,0);
+        String payorZipCode = HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__Zip_Code__c,0);
         
         String insuredStreet = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Address__c,0) ;
-           String insuredCity =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_City__c,0) ;
-             String insuredState =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_State__c,0);
-                String insuredZipCode = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Zipcode__c,0);
-         String insuredCountry = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Country__c,0);
-             
-                    if(HL7GeneralUtil.getCountryCodes(insuredCountry) != '')
-                {
-                     
-                     insuredCountry = HL7GeneralUtil.getCountryCodes(insuredCountry);
-                }
-                else
-                {
-                    insuredCountry = '';
-                }
-       
+        String insuredCity =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_City__c,0) ;
+        String insuredState =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_State__c,0);
+        String insuredZipCode = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Zipcode__c,0);
+        String insuredCountry = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Country__c,0);
+        
+        if(HL7CodeMappings.getCountryCode(insuredCountry) != '')
+        {
+            
+            insuredCountry = HL7CodeMappings.getCountryCode(insuredCountry);
+        }
+        else
+        {
+            insuredCountry = '';
+        }
+        
         List<ElixirSuite__Result__c> insuranceResults = new List<ElixirSuite__Result__c>();
         try {
             if(objInsurance!=null){
@@ -102,7 +102,7 @@ public class HL7SegmentEncoderIN1 {
                     lastFourDigitsSSN = String.valueOf(lastFourDigits);
                 } catch (Exception ex) {
                     System.debug('Invalid SSN: ' + ssn);
-                  //  ExceptionLog.logError(ex);
+                    //  ExceptionLog.logError(ex);
                 }
             }
             
@@ -114,17 +114,16 @@ public class HL7SegmentEncoderIN1 {
             
             System.debug('lastFourDigitsSSN: ' + lastFourDigitsSSN);
             
-             genderCode = objInsurance.ElixirSuite__Gender__c != null ? objInsurance.ElixirSuite__Gender__c :'';
-             
-                    if(HL7GeneralUtil.getGenderCodes(genderCode) != null)
-                {
-                     
-                     genderCode = HL7GeneralUtil.getGenderCodes(genderCode);
-                }
-                else
-                {
-                    genderCode = '';
-                }
+            genderCode = objInsurance.ElixirSuite__Gender__c != null ? objInsurance.ElixirSuite__Gender__c :'';
+            
+            if(HL7CodeMappings.getGenderCode(genderCode) != null)
+            {
+                genderCode = HL7CodeMappings.getGenderCode(genderCode);
+            }
+            else
+            {
+                genderCode = '';
+            }
             
             //========================================Formation of the message
             IN1+=  'IN1';
@@ -134,13 +133,13 @@ public class HL7SegmentEncoderIN1 {
             IN1+= '|' + HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.Name,0) + '^' + 'D';
             if(payorStreet =='' && payorCity=='' && payorState == '' && payorZipCode=='')
             {
-               IN1+= '|' +''; 
+                IN1+= '|' +''; 
             }
             else
             {
-              IN1+= '|' +payorStreet +'^'+ '^'+payorCity+'^'+ payorState +'^'+ payorZipCode;   
+                IN1+= '|' +payorStreet +'^'+ '^'+payorCity+'^'+ payorState +'^'+ payorZipCode;   
             }
-           
+            
             IN1+= '|' ;
             if(objInsurance.ElixirSuite__Payer__r.ElixirSuite__PhoneNumber__c!=null){
                 IN1+= '|' + objInsurance.ElixirSuite__Payer__r.ElixirSuite__PhoneNumber__c;
@@ -158,13 +157,13 @@ public class HL7SegmentEncoderIN1 {
             IN1+= '|' + HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Last_Name__c,0) +'^' + HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_First_Name__c,0);
             IN1+= '|' + HL7HelperClass.analyze(objInsurance.ElixirSuite__Patient_Relationship_With_Insured__c,0);
             IN1+= '|' + HL7HelperClass.analyze(formattedInsuredDob,0);
-             if(insuredStreet=='' && insuredCity=='' && insuredState == '' && insuredZipCode=='' && insuredCountry=='' )
+            if(insuredStreet=='' && insuredCity=='' && insuredState == '' && insuredZipCode=='' && insuredCountry=='' )
             {
-               IN1+= '|' +''; 
+                IN1+= '|' +''; 
             }
             else
             {
-              IN1+= '|' +insuredStreet +'^'+ '^'+insuredCity+'^'+ insuredState +'^'+ insuredZipCode + '^'+insuredCountry;   
+                IN1+= '|' +insuredStreet +'^'+ '^'+insuredCity+'^'+ insuredState +'^'+ insuredZipCode + '^'+insuredCountry;   
             }
             
             IN1+= '|';
@@ -191,7 +190,7 @@ public class HL7SegmentEncoderIN1 {
             IN1+= '|' + HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Policy_Group_FECA_Number__c,0);
             IN1+= '|';
             IN1+= '|';
-             IN1+= '|';
+            IN1+= '|';
             IN1+= '|' + planValidDays != '0' ? planValidDays : '';
             IN1+= '|';
             IN1+= '|';
@@ -217,13 +216,13 @@ public class HL7SegmentEncoderIN1 {
             
             
         } catch (exception e) {
-            // Log the exception if needed
             System.debug('e.getMessage()'+e.getMessage());
-          //  ExceptionLog.logDebugString('Exception occurred in HL7 IN1 Record Segment: ' + e.getMessage());
-            // Return an empty string
+            ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+            objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 IN1 Segment:'+ e.getMessage();
+            Insert objExp;
             return '';
         }     
-       System.debug(IN1);
+        System.debug(IN1);
         return IN1;
     }
 }

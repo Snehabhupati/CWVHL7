@@ -4,7 +4,7 @@ Profile: Salesforce Developer
 Company: Mirketa Inc
 */
 
-global with sharing class HL7SegmentEncoderMSH {
+public class HL7SegmentEncoderMSH {
     public static String generateMSHSegment(String accountId, String visitId, String messageType) {
         String sendApp ='';
         String sendFacility = '';
@@ -13,14 +13,14 @@ global with sharing class HL7SegmentEncoderMSH {
         
         try{
             
-            list<Sender_MetaData__mdt> sendAppdata = HL7GeneralUtil.getSendingApplication();       
-            if (sendAppdata !=null && sendAppdata.size() > 0 && sendAppdata[0].value__c !=null){
-                sendApp = sendAppdata[0].value__c;
+            String sendAppdata = HL7CodeMappings.SendingApplication;       
+            if (sendAppdata !=null ){
+                sendApp = sendAppdata;
                 
             }        
-            List<Sender_MetaData__mdt> mdtFacility = HL7GeneralUtil.getSendingFacility();
-            if (mdtFacility !=null && mdtFacility.size() > 0 && mdtFacility[0].value__c !=null){
-                sendFacility = mdtFacility[0].value__c;
+            String mdtFacility = HL7CodeMappings.SendingFacility;
+            if (mdtFacility !=null){
+                sendFacility = mdtFacility;
                 
             }
             
@@ -77,7 +77,7 @@ global with sharing class HL7SegmentEncoderMSH {
             strMSH += '|';// Continuation pointer
             strMSH += 'AL'+'|';//accept acknowledgement type
             strMSH += '|';//application acknowledgement type
-            strMSH +=   HL7HelperClass.analyze(HL7GeneralUtil.getCountryCodes(cmpInfo.Country),2) + '|';//Country code 
+            strMSH +=   HL7HelperClass.analyze(HL7CodeMappings.getCountryCode(cmpInfo.Country),2) + '|';//Country code 
             strMSH += 'ASCII'+'|';//charcter set
             strMSH +=  '^' + HL7HelperClass.analyze(cmpInfo.LanguageLocaleKey.split('_')[0],250) +'|';//principle language of message
             strMSH += '|';//alternate character set 
