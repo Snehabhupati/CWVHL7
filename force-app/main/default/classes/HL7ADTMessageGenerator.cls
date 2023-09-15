@@ -6,6 +6,7 @@ public class HL7ADTMessageGenerator {
         String strPV1='';
         String strPR1='';
         String strIN1='';
+        String strDG1='';
         
         try{
             strMSH = HL7SegmentEncoderMSH.generateMSHSegment(accountId,visitId, messageType);
@@ -42,8 +43,13 @@ public class HL7ADTMessageGenerator {
         } catch (Exception ex) {
             System.debug('Exception occurred in HL7 PR1 Segment:'+ ex.getMessage());
         }
-        System.debug(strMSH + strEVN + strPID + strPV1  + strPR1 + strIN1);
-        return strMSH  + strEVN + strPID + strPV1  + strPR1 + strIN1;
+        try{
+            strDG1 = HL7SegmentEncoderDG1.generateDG1Segment(accountId);
+        } catch (Exception ex) {
+           System.debug('Exception occurred in HL7 DG1 Segment:'+ ex.getMessage());
+        }
+        System.debug(strMSH + strEVN + strPID + strPV1  + strPR1 + strIN1 + strDG1);
+        return strMSH  + strEVN + strPID + strPV1  + strPR1 + strIN1 + strDG1;
     }
     
 }

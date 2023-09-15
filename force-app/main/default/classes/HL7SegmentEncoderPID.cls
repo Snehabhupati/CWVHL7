@@ -32,7 +32,7 @@ public class HL7SegmentEncoderPID {
             if(mdtFacility != null){
                 sendFacility = mdtFacility;
             }
-            sendFacility =HL7HelperClass.replaceSpecialCharacters(sendFacility);
+            sendFacility =HL7HelperClass.analyze(sendFacility,241);
             lastName = HL7HelperClass.analyze(objAccount.ElixirSuite__Last_Name__c,194);
             firstName = HL7HelperClass.analyze(objAccount.ElixirSuite__First_Name__c,30);
             billingStreet = HL7HelperClass.analyze(objAccount.BillingStreet,184);
@@ -79,7 +79,7 @@ public class HL7SegmentEncoderPID {
             }
             
             if(HL7CodeMappings.getCountryCode(accountId)!=null && objAccount.BillingCountry!=null){
-                countryCode = HL7HelperClass.replaceSpecialCharacters(objAccount.BillingCountry);
+                countryCode = HL7HelperClass.analyze(objAccount.BillingCountry,3);
                 countryCode = HL7CodeMappings.getCountryCode(countryCode);
             }
             System.debug('countryCode'+countryCode);

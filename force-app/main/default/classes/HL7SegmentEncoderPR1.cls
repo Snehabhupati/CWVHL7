@@ -2,12 +2,10 @@ public class HL7SegmentEncoderPR1 {
     public static String generatePR1Segment(String accountId, String visitId ) {
         String strPR1 ='';
         try{ 
-            // List<ElixirSuite__Procedure__c> objProcedureList = HL7GeneralUtil.getPatientProcedure(accountId);
-            Account objAccount = HL7GeneralUtil.getAccount(accountId);
             List<ElixirSuite__Procedure__c> objProcedureList = new List<ElixirSuite__Procedure__c>();
-            
-            if (HL7GeneralUtil.getPatientProcedure(accountId, visitId).size() > 0) {
-                objProcedureList = HL7GeneralUtil.getPatientProcedure(accountId, visitId);
+            List<ElixirSuite__Procedure__c> ProcedureList = HL7GeneralUtil.getPatientProcedure(accountId, visitId);
+            if (ProcedureList != null) {
+                objProcedureList = ProcedureList;
             }
             for(integer i = 0; i < objProcedureList.size(); i++){
                 strPR1 += generatePR1SegmentRecord(i+1, objProcedureList[i]) + '\n';
@@ -41,7 +39,7 @@ public class HL7SegmentEncoderPR1 {
             
             PR1+= '|' +ProcedureCode;
             PR1+= '|'; //Procedure Description
-            PR1+= '|' + HL7HelperClass.encodeAndTruncateString((HL7GeneralUtil.getLastModifiedDateTime(objProcedure.ElixirSuite__From_Date_of_Service__c)),26); //Procedure Date/Time
+            PR1+= '|' + HL7HelperClass.analyze((HL7GeneralUtil.getLastModifiedDateTime(objProcedure.ElixirSuite__From_Date_of_Service__c)),26); //Procedure Date/Time
             PR1+= '|'; //Procedure Functional Type
             if(objProcedure.ElixirSuite__To_Date_of_Service__c!= null && objProcedure.ElixirSuite__From_Date_of_Service__c!=null )
             {
