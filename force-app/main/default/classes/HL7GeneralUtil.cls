@@ -109,26 +109,16 @@ public class HL7GeneralUtil {
     }
     
     
-    //Get Account history
-    public static List<AccountHistory> getAccountHistory(){
-        List<AccountHistory> accHistory = [SELECT Id, Field, CreatedDate, 
-                                           CreatedById,CreatedBy.FirstName,CreatedBy.LastName, 
-                                           OldValue, NewValue FROM AccountHistory 
-                                           where field='ElixirSuite__Current_Status_Of_Patient__c'
-                                           WITH SECURITY_ENFORCED order by createddate desc limit 1];
-        if(accHistory.size()>0){
-            return accHistory;
-        }
-        return null;
-    }
-    
+  
     //Get Care Episode for PV1 (Patient Visit)  changed the query where before it will return only active visits now it return all statuses
     Public static List<ElixirSuite__Visits__c> getCareEpisode(String accountId, String visitId){
-        List<ElixirSuite__Visits__c> careEpisode =[Select Id, ElixirSuite__Care_Episode_Location__r.Name,Service_Location__c, 
+        List<ElixirSuite__Visits__c> careEpisode =[SELECT Id, ElixirSuite__Care_Episode_Location__r.Name,Service_Location__c, 
                                                    ElixirSuite__Admit_Date__c,ElixirSuite__Discharge_Date__c,CreatedBy.FirstName, CreatedBy.LastName, CreatedById,CreatedDate,
-                                                   ElixirSuite__Visit_Start__c,ElixirSuite__Visit_End__c,ElixirSuite__Status__c
-                                                   from ElixirSuite__Visits__c 
-                                                   where ElixirSuite__Account__c=:accountId and  Id =: visitId
+                                                   ElixirSuite__Visit_Start__c,ElixirSuite__Visit_End__c,ElixirSuite__Status__c,ElixirSuite__Account__r.ElixirSuite__MRN_Number_New__c,
+                                                   Attending_Clinical_Staff__c,Attending_Clinical_Staff__r.ElixirSuite__Provider_First_Name__c,
+                                                   Attending_Clinical_Staff__r.ElixirSuite__Provider_Last_Name__c,Attending_Clinical_Staff__r.ElixirSuite__Provider_Code__c
+                                                   FROM ElixirSuite__Visits__c 
+                                                   WHERE ElixirSuite__Account__c=:accountId and  Id =: visitId
                                                    WITH SECURITY_ENFORCED Limit 1];
         if(careEpisode.size()>0){
             return careEpisode;
