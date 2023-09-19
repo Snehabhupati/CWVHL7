@@ -32,7 +32,12 @@ public class HL7GeneralUtil {
     public static string getDateTimeFormat(Date dt){
         DateTime dTime = DateTime.newInstance(dt, Time.newInstance(0, 0, 0, 0));
         String formattedDate = dTime.format('yyyyMMdd');
-        return formattedDate;
+        System.debug('formattedDate @' +formattedDate);
+        if(formattedDate != null){
+            return formattedDate; 
+        }else{
+            return '';
+        }
     }
     
     //Time in UTC e.g. 20230512044649-0400
@@ -60,7 +65,7 @@ public class HL7GeneralUtil {
                           ElixirSuite__Admit_Date__c,ElixirSuite__dischargeDateNew__c, CreatedById, CreatedBy.FirstName, CreatedBy.LastName,
                           ElixirSuite__First_Name__c,ElixirSuite__Last_Name__c, 
                           Phone,ElixirSuite__Patient_s_Birth_Date__c,BillingStreet,
-                          ElixirSuite__SSN__c,ElixirSuite__Gender__c,
+                          ElixirSuite__SSN__c,ElixirSuite__Gender__c,Race__c,Ethnicity__c,
                           ElixirSuite__Deceased__c,ElixirSuite__Deceased_Date__c,
                           AccountNumber,BillingCity,BillingState,BillingPostalCode,
                           BillingCountry,BillingAddress,ElixirSuite__birthdate__c,
@@ -477,31 +482,5 @@ return null;
         
         return null;
     }   
-    
-  /*  //get result parameters 
-    public static list<ElixirSuite__Lab_Order__c> getLabOrderAndResultInfo(String labOrderId,String accountId){
-        try{
-        list<ElixirSuite__Lab_Order__c> labresultlist =   [SELECT Id, Name,ElixirSuite__LabName__c,
-                                                           ElixirSuite__Lab_Order_Req__c,ElixirSuite__Status__c,
-                                                           ElixirSuite__Physician_Name__c,ElixirSuite__Expected_Date_Time__c,
-                                                           ElixirSuite__Order_Type__c,CreatedDate,ElixirSuite__Collection_Date_Time__c,
-                                                           ElixirSuite__Test_Name__c,ElixirSuite__Doctors_Note__c,ElixirSuite__Results_Rpt_Status_Change_Date_Time__c,ElixirSuite__Result_Status__c,ElixirSuite__Test_Result_Name__c,
-                                                           (Select id, Name, ElixirSuite__Observation_Value_type__c, ElixirSuite__Observe_Result_Status__c, 
-                                                            ElixirSuite__Observation_Identifier_Analyte_Code__c, ElixirSuite__Observation_Identifier_Analyte_Descrip__c, 
-                                                            ElixirSuite__Observation_Value_Numeric__c, ElixirSuite__Observation_Value_Text__c, ElixirSuite__Observation_Value_TextAREA__c,
-                                                            ElixirSuite__Observation_Value_ImageSource__c, ElixirSuite__Observation_Value_Image_Data_type__c, ElixirSuite__Observation_Value_Image_Data_subtype__c,
-                                                            ElixirSuite__Observation_Value_ImageEncoding_format__c,ElixirSuite__Observation_Value_Image__c,
-                                                            ElixirSuite__Units__c, ElixirSuite__References_Range__c, ElixirSuite__Observation_Value__c, ElixirSuite__Date_Time_Of_Observation__c,
-                                                            ElixirSuite__Notes__c FROM ElixirSuite__LabOrder_Hl7_Results_Tests_Parameters__r) 
-                                                           FROM ElixirSuite__Lab_Order__c where ElixirSuite__Lab_Order_Req__c = :labOrderId AND ElixirSuite__Account_Id__c = :accountId];
-            
-            return labresultlist;
-            
-        }catch(exception e){
-           //ElixirSuite.Exceptionlog.logDebugString(e.getMessage());
-            return new List<ElixirSuite__Lab_Order__c>();
-        }
-    }
-  */
-    
+ 
 }
