@@ -12,7 +12,6 @@ public class HL7SegmentEncoderPID {
         String lastFourDigitsSSN = '';
         String birthDate = '';
         Account objAccount = HL7GeneralUtil.getAccount(accountId);
-        // Add Deceased field to PID segment
         Boolean isDeceased = objAccount.ElixirSuite__Deceased__c;
         String deceasedFlag = isDeceased ? 'Y' : 'N';
         try{
@@ -36,6 +35,13 @@ public class HL7SegmentEncoderPID {
             ssn = HL7HelperClass.analyze('XXX-XX-' + lastFourDigitsSSN, 11);
             
             genderValue = objAccount.ElixirSuite__Gender__c != null ? objAccount.ElixirSuite__Gender__c :'';
+            String ethnicityCode = HL7HelperClass.analyze(HL7CodeMappings.getEthnicityCode(objAccount.Ethnicity__c),20);
+            String ethnicityText = '';
+            if(ethnicityCode == 'U'){
+                ethnicityText = 'Unknown';
+            }else{
+                ethnicityText = objAccount.Ethnicity__c;
+            }
             String genderCode = '';
             if(genderValue == 'Female' || genderValue == 'Male'){
                 genderCode =  HL7CodeMappings.getGenderCode(genderValue);
@@ -62,7 +68,7 @@ public class HL7SegmentEncoderPID {
             strPID += '|' + HL7HelperClass.analyze(birthDate,26);
             strPID += '|' + genderCode;
             strPID += '|' + ''; //Patient Alias - No elixir field
-            strPID += '|' + HL7HelperClass.analyze(HL7CodeMappings.getRaceCode(objAccount.Race__c),250); //Race - No elixir field
+            strPID += '|' + HL7HelperClass.analyze(HL7CodeMappings.getRaceCode(objAccount.Race__c),20) + '^' + HL7HelperClass.analyze(objAccount.Race__c, 199); //Race - No elixir field
             strPID += '|' + (HL7HelperClass.analyze(objAccount.BillingStreet,184) + '^^' + HL7HelperClass.analyze(objAccount.BillingCity,50) + '^' 
                              + HL7HelperClass.analyze(objAccount.BillingState,50) + '^' + HL7HelperClass.analyze(objAccount.BillingPostalCode,12) + '^' 
                              + HL7HelperClass.analyze(HL7CodeMappings.getCountryCode(objAccount.BillingCountry),3) + '^');
@@ -76,7 +82,7 @@ public class HL7SegmentEncoderPID {
             strPID += '|' + lastFourDigitsSSN;
             strPID += '|' + ''; // patient's driver license number
             strPID += '|' + ''; // monther's identifier
-            strPID += '|' +  HL7HelperClass.analyze(HL7CodeMappings.getEthnicityCode(objAccount.Ethnicity__c),250); // ethnic group
+            strPID += '|' +  ethnicityCode + '^' + ethnicityText;
             strPID += '|' + ''; // birth place
             strPID += '|' + ''; //multiple birth indicator
             strPID += '|' + ''; //birth order>
@@ -87,7 +93,7 @@ public class HL7SegmentEncoderPID {
             strPID += '|' + deceasedFlag;
             strPID += '|' + ''; //identity unknown indicator
             strPID += '|' + ''; //identity reliability code
-            strPID += '|' +  HL7HelperClass.analyze(HL7GeneralUtil.getLastModifiedDateTime(objAccount.LastModifiedDate),26); //last update date/time
+            strPID += '|' +  HL7HelperClass.analyze(HL7GeneralUtil.getModifiedDateTime(objAccount.LastModifiedDate),26); //last update date/time
             strPID += '|' + HL7HelperClass.analyze((HL7CodeMappings.SendingFacility),241); //last update facility
             strPID += '|' + ''; //species code
             strPID += '|' + ''; //breed code>
@@ -95,7 +101,6 @@ public class HL7SegmentEncoderPID {
             strPID += '|' + ''; //production class code
             strPID += '|' ; //tribal citizenship
             
-            System.debug(strPID);             
             return strPID +'\n';
         } catch (Exception e) {
             System.debug('Exception occurred in HL7 PID Segment: ' + e.getMessage());

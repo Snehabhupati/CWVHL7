@@ -39,14 +39,19 @@ public class HL7CodeMappings {
     }    
     
     public static String getCountryCode(String countryName) {
-        return COUNTRY_CODES.containsKey(countryName) ? COUNTRY_CODES.get(countryName) : '';
+        for (String key : COUNTRY_CODES.keySet()) {
+            if (countryName == key || countryName == COUNTRY_CODES.get(key)) {
+                return COUNTRY_CODES.get(key);
+            }
+        }
+        return '';
     }
     
     public static String getRaceCode(String race) {
         return RACE_CODES.containsKey(race) ? RACE_CODES.get(race) : '2131-1';
     }
     public static String getEthnicityCode(String ethnicity) {
-        return ETHNICITY_CODES.containsKey(ethnicity) ? ETHNICITY_CODES.get(ethnicity) : '';
+        return ETHNICITY_CODES.containsKey(ethnicity) ? ETHNICITY_CODES.get(ethnicity) : 'U';
     }
     
 }

@@ -26,13 +26,13 @@ public class HL7SegmentEncoderEVN {
                 
                 if(objVisit[0].ElixirSuite__Visit_Start__c!=null && objVisit[0].ElixirSuite__Status__c=='Active')
                 {
-                    eventOccuredDateTime=HL7HelperClass.analyze(HL7GeneralUtil.getLastModifiedDateTime(objVisit[0].ElixirSuite__Visit_Start__c),26);
+                    eventOccuredDateTime=HL7HelperClass.analyze(HL7GeneralUtil.getModifiedDateTime(objVisit[0].ElixirSuite__Visit_Start__c),26);
                     
                 }
                 
                 if(objVisit[0].ElixirSuite__Visit_End__c!=null && objVisit[0].ElixirSuite__Status__c=='Closed')
                 {
-                    eventOccuredDateTime=HL7HelperClass.analyze(HL7GeneralUtil.getLastModifiedDateTime(objVisit[0].ElixirSuite__Visit_End__c),26);
+                    eventOccuredDateTime=HL7HelperClass.analyze(HL7GeneralUtil.getModifiedDateTime(objVisit[0].ElixirSuite__Visit_End__c),26);
                 }     
                 
                 if((objVisit[0].ElixirSuite__Status__c=='Active') || (objVisit[0].ElixirSuite__Status__c=='Closed'))

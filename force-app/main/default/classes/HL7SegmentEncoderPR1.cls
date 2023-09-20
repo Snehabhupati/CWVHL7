@@ -39,7 +39,7 @@ public class HL7SegmentEncoderPR1 {
             
             PR1+= '|' +ProcedureCode;
             PR1+= '|'; //Procedure Description
-            PR1+= '|' + HL7HelperClass.analyze((HL7GeneralUtil.getLastModifiedDateTime(objProcedure.ElixirSuite__From_Date_of_Service__c)),26); //Procedure Date/Time
+            PR1+= '|' + HL7HelperClass.analyze((HL7GeneralUtil.getModifiedDateTime(objProcedure.ElixirSuite__From_Date_of_Service__c)),26); //Procedure Date/Time
             PR1+= '|'; //Procedure Functional Type
             if(objProcedure.ElixirSuite__To_Date_of_Service__c!= null && objProcedure.ElixirSuite__From_Date_of_Service__c!=null )
             {

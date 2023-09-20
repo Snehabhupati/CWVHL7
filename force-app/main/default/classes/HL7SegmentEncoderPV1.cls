@@ -66,8 +66,8 @@ public class HL7SegmentEncoderPV1 {
             pv1Segment += '|'; //PV1.38 - Diet Type
             pv1Segment += '|'; //PV1.39 - Servicing Facility
             pv1Segment += '|'; //PV1.40 - Bed Status
-            pv1Segment += '|'+HL7HelperClass.analyze(HL7GeneralUtil.getLastModifiedDateTime(careEpisode[0].ElixirSuite__Visit_Start__c),26); // PV1.44 - Admit Date/Time
-            pv1Segment += '|'+HL7HelperClass.analyze(HL7GeneralUtil.getLastModifiedDateTime(careEpisode[0].ElixirSuite__Visit_End__c),26); //PV1.45 - Discharge Date/Time
+            pv1Segment += '|'+HL7HelperClass.analyze(HL7GeneralUtil.getModifiedDateTime(careEpisode[0].ElixirSuite__Visit_Start__c),26); // PV1.44 - Admit Date/Time
+            pv1Segment += '|'+HL7HelperClass.analyze(HL7GeneralUtil.getModifiedDateTime(careEpisode[0].ElixirSuite__Visit_End__c),26); //PV1.45 - Discharge Date/Time
             pv1Segment += '|'; //PV1.38 - Diet Type
             pv1Segment += '|'; //PV1.39 - Servicing Facility
             pv1Segment += '|'; //PV1.40 - Bed Status
