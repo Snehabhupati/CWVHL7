@@ -13,48 +13,29 @@ public class HL7SegmentEncoderMSH {
         
         try{
             
-            String sendAppdata = HL7CodeMappings.SendingApplication;       
-            if (sendAppdata !=null ){
-                sendApp = sendAppdata;
-                
-            }        
-            String mdtFacility = HL7CodeMappings.SendingFacility;
-            if (mdtFacility !=null){
-                sendFacility = mdtFacility;
-                
-            }
-            
             //Retrieve Language
-            Organization cmpInfo = HL7GeneralUtil.getCompanyInformation();   
-            sendApp =HL7HelperClass.encodeAndTruncateString(sendApp,227);      
-            sendFacility =HL7HelperClass.encodeAndTruncateString(sendFacility,227);
+            Organization cmpInfo = HL7GeneralUtil.getCompanyInformation(); 
             triggerEvent = HL7GeneralUtil.getTriggerEvent(accountId, visitId);
             
             //getting MessageType
             if(messageType == 'ADT'){
                 
-                if(triggerEvent == ''){                    
-                    //  ExceptionLog.logDebugString('Unable to generate MSH message due to required fields missing:[Patient Status]');  
+                if(triggerEvent == ''){  
+                    ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+                    objExp.ElixirSuite__Stack_Trace_Long__c = 'Unable to generate MSH message due to required fields missing:[Patient Status]';
+                    Insert objExp;
                     return '';
                 }                
                 strMSHFieldValue = 'ADT^' + HL7HelperClass.analyze(HL7GeneralUtil.getTriggerEvent(accountId, visitId),3); //Message Code, Trigger Event         
                 //MessageStructure
-                if(triggerEvent == 'A01' || triggerEvent == 'A08'){
+                if(triggerEvent == 'A01'){
                     strMSHFieldValue += '^' + 'ADT_A01' ;
                 }else if (triggerEvent == 'A03'){
                     strMSHFieldValue += '^' + 'ADT_A03';
                 }
                 
-            } else if (messageType == 'OML'){
-                strMSHFieldValue = 'OML^O21^OML_O21';//Messagecode 
-            } else if (messageType == 'SIU'){
-                strMSHFieldValue = 'SIU^S12^SIU_S12';//Messagecode
-            } else if (messageType == 'ORU'){
-                strMSHFieldValue = 'ORU^R01^ORU_R01' ;//Messagecode
-            } else if (messageType == 'RGV'){
-                strMSHFieldValue = 'RGV^O15^RGV_O15';//Messagecode
             } else{
-                //    ExceptionLog.logDebugString('No messageType specified'); 
+                System.debug('No messageType specified'); 
                 return ''; 
             }                      
             //========================================Formation of the message
@@ -63,8 +44,8 @@ public class HL7SegmentEncoderMSH {
             
             strMSH = 'MSH' + '|';
             strMSH += HL7HelperClass.getEncodingCharacters() + '|';  //EncodingCharacters
-            strMSH += HL7HelperClass.analyze(sendApp,227) + '|';
-            strMSH += HL7HelperClass.analyze(sendFacility,227) + '|'; //sending facility      
+            strMSH += HL7HelperClass.analyze((HL7CodeMappings.SendingApplication),227) + '|';
+            strMSH += HL7HelperClass.analyze((HL7CodeMappings.SendingFacility),227) + '|'; //sending facility      
             strMSH += '|'; //ReceivingApplication
             strMSH += '|'; //ReceivingFacility
             strMSH += HL7HelperClass.analyze(HL7GeneralUtil.getCurrentDateTime(),26) + '|';
@@ -85,7 +66,6 @@ public class HL7SegmentEncoderMSH {
             System.debug('MSH Segment ' +strMSH);
             return strMSH + '\n';
         } catch (Exception e) {
-            //   ExceptionLog.logDebugString('Exception occurred in HL7 MSH Segment: ' + e.getMessage());
             ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
             objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 MSH Segment:'+ e.getMessage();
             Insert objExp;

@@ -10,6 +10,7 @@ public class HL7GeneralUtil {
     //Setup -> Company Information
     public static Organization getCompanyInformation(){
         Organization cmpInfo = [SELECT Id, Name,Phone,LanguageLocaleKey,Street, City, State, PostalCode, Country FROM Organization WITH SECURITY_ENFORCED Limit 1];
+        system.debug('Hl7GeneralUtil @Organization' +Limits.getQueries());
         return cmpInfo;
     }
   
@@ -18,9 +19,11 @@ public class HL7GeneralUtil {
     public static string getTriggerEvent(String accountId, String visitId){
         list<ElixirSuite__Visits__c> objVisit = HL7GeneralUtil.getCareEpisode(accountId,visitId );
         if(objVisit[0].ElixirSuite__Status__c == 'Active') {
+            system.debug('Hl7GeneralUtil @getTriggerEvent'+Limits.getQueries());
             return 'A01';
         }
         else if(objVisit[0].ElixirSuite__Status__c == 'Closed') {
+            system.debug('Hl7GeneralUtil');
             return 'A03';
         }
         else{
@@ -34,6 +37,7 @@ public class HL7GeneralUtil {
         String formattedDate = dTime.format('yyyyMMdd');
         System.debug('formattedDate @' +formattedDate);
         if(formattedDate != null){
+            system.debug('Hl7GeneralUtil @getDateTimeFormat '+Limits.getQueries());
             return formattedDate; 
         }else{
             return '';
@@ -42,11 +46,13 @@ public class HL7GeneralUtil {
     
     //Time in UTC e.g. 20230512044649-0400
     public static string getCurrentDateTime() { 
-        DateTime currentDateTime = System.now();        
+        DateTime currentDateTime = System.now();
+		system.debug('Hl7GeneralUtil @getCurrentDateTime');        
         return currentDateTime.format('yyyyMMddHHmmssZ');
     }
     public static string getModifiedDateTime(datetime dtTime) { //converted to utc
         if(dtTime != null){
+            system.debug('Hl7GeneralUtil @getModifiedDateTime '+Limits.getQueries());
              return dtTime.format('yyyyMMddHHmmssZ');
         }else{
              return null;
@@ -56,15 +62,15 @@ public class HL7GeneralUtil {
     //Time in Milliseconds 20230512044649994 (17-digit unique number)
     public static string getCurrentDateTimeInMilliSecods() {
         DateTime currentDateTime = System.now();
+        system.debug('Hl7GeneralUtil @getCurrentDateTimeInMilliSecods '+Limits.getQueries());
         return currentDateTime.format('yyyyMMddHHmmssSSS');
     }
     
     //Get Account info only if the recordType = 'Patient Account'
     public static Account getAccount(String accountId){  //strip inaccessible        
         Id patientRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName().get('Patient_Account').getRecordTypeId();
-        Account objAccount;
         try{
-            objAccount = [select Id,CreatedDate,ElixirSuite__Current_Status_Of_Patient__c, ElixirSuite__Treatment_Center_Name__c,
+            Account objAccount = [select Id,CreatedDate,ElixirSuite__Current_Status_Of_Patient__c, ElixirSuite__Treatment_Center_Name__c,
                           ElixirSuite__Admit_Date__c,ElixirSuite__dischargeDateNew__c, CreatedById, CreatedBy.FirstName, CreatedBy.LastName,
                           ElixirSuite__First_Name__c,ElixirSuite__Last_Name__c, 
                           Phone,ElixirSuite__Patient_s_Birth_Date__c,BillingStreet,
@@ -77,6 +83,7 @@ public class HL7GeneralUtil {
                           from Account where Id=:accountId AND RecordTypeId = :patientRecordTypeId WITH SECURITY_ENFORCED Limit 1];
             
             if (objAccount != null){
+                system.debug('Hl7GeneralUtil @Account '+Limits.getQueries());
                 return objAccount;  
             } 
         }
@@ -95,9 +102,10 @@ public class HL7GeneralUtil {
                                                    Attending_Clinical_Staff__c,Attending_Clinical_Staff__r.ElixirSuite__Provider_First_Name__c,
                                                    Attending_Clinical_Staff__r.ElixirSuite__Provider_Last_Name__c,Attending_Clinical_Staff__r.ElixirSuite__Provider_Code__c
                                                    FROM ElixirSuite__Visits__c 
-                                                   WHERE ElixirSuite__Account__c=:accountId and  Id =: visitId
+                                                   WHERE ElixirSuite__Account__c=:accountId and  Id =: visitId AND (ElixirSuite__Status__c = 'Active' OR ElixirSuite__Status__c = 'Closed')
                                                    WITH SECURITY_ENFORCED Limit 1];
         if(careEpisode.size()>0){
+            system.debug('Hl7GeneralUtil @ElixirSuite__Visits__c '+Limits.getQueries());
             return careEpisode;
         }
         return null;
@@ -109,10 +117,12 @@ public class HL7GeneralUtil {
                                                            ElixirSuite__To_Date_of_Service__c, ElixirSuite__Code_Category__c,
                                                            ElixirSuite__Modifier1__r.Name,ElixirSuite__Modifier1__r.ElixirSuite__Code_Description__c, ElixirSuite__Modifier2__r.Name, ElixirSuite__Modifier2__r.ElixirSuite__Code_Description__c,
                                                            ElixirSuite__Modifier3__r.Name,ElixirSuite__Modifier3__r.ElixirSuite__Code_Description__c, ElixirSuite__Modifier4__r.Name,ElixirSuite__Modifier4__r.ElixirSuite__Code_Description__c,
-                                                           CreatedBy.LastName , CreatedBy.PostalCode, CreatedBy.Profile.Name, CreatedBy.FirstName , CreatedBy.CompanyName , CreatedBy.City ,CreatedBy.State , CreatedBy.Street , CreatedBy.Country ,CreatedBy.Phone, CreatedBy.Address
+                                                           CreatedBy.LastName , CreatedBy.PostalCode, CreatedBy.Profile.Name, CreatedBy.FirstName , CreatedBy.CompanyName , CreatedBy.City ,CreatedBy.State , CreatedBy.Street , CreatedBy.Country ,
+                                                           CreatedBy.Phone, CreatedBy.Address,CreatedBy.CustomText2__c
                                                            FROM ElixirSuite__Procedure__c WHERE ElixirSuite__Code_Category__c!=null and ElixirSuite__Account__c=:accountId AND ElixirSuite__Visits__c =: visitId WITH SECURITY_ENFORCED Limit 10];
         if(patientProcedure.size()>0){
             System.debug('patientProcedure  $$' +patientProcedure);
+            system.debug('Hl7GeneralUtil @ElixirSuite__Procedure__c '+Limits.getQueries());
             return patientProcedure;
         }
         return null;
@@ -138,6 +148,7 @@ public class HL7GeneralUtil {
                                                           WITH SECURITY_ENFORCED Limit 10];
         
         if(patientInsuranceList.size()>0){
+            system.debug('Hl7GeneralUtil @ElixirSuite__VOB__c '+Limits.getQueries());
             return patientInsuranceList;
         }
         return null;
@@ -150,6 +161,7 @@ public class HL7GeneralUtil {
                                                                   WITH SECURITY_ENFORCED Limit 10];
         
         if(patientInsuranceResultList.size()>0){
+            system.debug('Hl7GeneralUtil @ElixirSuite__Result__c '+Limits.getQueries());
             return patientInsuranceResultList;
         }
         return null;
@@ -164,14 +176,14 @@ public class HL7GeneralUtil {
                                                              ElixirSuite__Diagnosis_Code__r.ElixirSuite__Version__c,CreatedDate,CreatedBy.Name,LastModifiedDate, ElixirSuite__Diagnosis_Code__r.ElixirSuite__Effective_Date__c
                                                              FROM ElixirSuite__Diagnosis_Code__c 
                                                              WHERE (ElixirSuite__Problem__r.ElixirSuite__Account__c =: accountId OR 
-                                                                    ElixirSuite__Diagnosis_Code__r.ElixirSuite__Account__c =:accountId) AND ElixirSuite__Diagnosis_Code__r.ElixirSuite__Diagnosis_Type__c  != 'NONE' AND  IsDeleted = false  Limit 10];
+                                                                    ElixirSuite__Diagnosis_Code__r.ElixirSuite__Account__c =:accountId) AND ElixirSuite__Diagnosis_Code__r.ElixirSuite__Diagnosis_Type__c  != 'NONE' AND  IsDeleted = false WITH SECURITY_ENFORCED  Limit 10];
         
         
-        if(PatientList.size()>0){            
+        if(PatientList.size()>0){  
+            system.debug('Hl7GeneralUtil @ElixirSuite__Diagnosis_Code__c '+Limits.getQueries());
             return PatientList;
         }
         return null;
     }
-
-   
+  
 }

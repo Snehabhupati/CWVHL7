@@ -2,20 +2,17 @@ public class HL7SegmentEncoderPR1 {
     public static String generatePR1Segment(String accountId, String visitId ) {
         String strPR1 ='';
         try{ 
-            List<ElixirSuite__Procedure__c> objProcedureList = new List<ElixirSuite__Procedure__c>();
             List<ElixirSuite__Procedure__c> ProcedureList = HL7GeneralUtil.getPatientProcedure(accountId, visitId);
-            if (ProcedureList != null) {
-                objProcedureList = ProcedureList;
-            }
-            for(integer i = 0; i < objProcedureList.size(); i++){
-                strPR1 += generatePR1SegmentRecord(i+1, objProcedureList[i]) + '\n';
+            System.debug('HL7PV1Limits:'+Limits.getQueries());
+            if(ProcedureList != null){
+                for(integer i = 0; i < ProcedureList.size(); i++){
+                    strPR1 += generatePR1SegmentRecord(i+1, ProcedureList[i]) + '\n';
+                } 
             }
             System.debug(strPR1);
             return strPR1;
         } catch (Exception e) {
-            // Log the exception if needed
             System.debug('Exception occurred in HL7 PR1 Segment: ' + e.getMessage());
-            // Return an empty string
             return '';
         }
     }
@@ -94,8 +91,9 @@ public class HL7SegmentEncoderPR1 {
         } 
         
         catch (exception e) {
-            System.debug('Exception occurred in HL7 PR1 Record Segment: ' + e.getMessage());
-            // Return an empty string
+            ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+            objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 PR1 Record Segment: '+ e.getMessage();
+            Insert objExp;
             return '';
         }   
         system.debug('PR1' +PR1);

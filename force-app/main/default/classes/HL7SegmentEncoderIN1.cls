@@ -8,19 +8,17 @@ public class HL7SegmentEncoderIN1 {
     public static String generateIN1Segment(String accountId) {
         String strIN1 ='';
         try{
-            Account objAccount = HL7GeneralUtil.getAccount(accountId);
-            List<ElixirSuite__VOB__c> objInsuranceList = new List<ElixirSuite__VOB__c>();
-            if (HL7GeneralUtil.getPrimaryInsurance(accountId) != null && HL7GeneralUtil.getPrimaryInsurance(accountId).size() > 0) {
-                objInsuranceList = HL7GeneralUtil.getPrimaryInsurance(accountId);
-            }
+            List<ElixirSuite__VOB__c> objInsuranceList = HL7GeneralUtil.getPrimaryInsurance(accountId);
+            System.debug('HL7IN1Limits:'+Limits.getQueries());
+            if (objInsuranceList != null && objInsuranceList.size() > 0) {
             for(integer i = 0; i < objInsuranceList.size(); i++){
                 strIN1 += generateIN1SegmentRecord(i+1, objInsuranceList[i]) + '\n';
-                
             }
+        }
             System.debug('strIN1'+strIN1);
             return strIN1;
         } catch (Exception e) {
-            //  ExceptionLog.logDebugString('Exception occurred in HL7 IN1 Segment: ' + e.getMessage());
+            System.debug('Exception occurred in HL7 IN1 Segment: ' + e.getMessage());
             return '';
         } 
     }
@@ -36,32 +34,19 @@ public class HL7SegmentEncoderIN1 {
         String formattedEligibilityResultDate = '';
         String formattedPlanStartDate ='';
         String formattedPlanEndDate ='';
-        String genderCode ='';
         ElixirSuite__Result__c resultRecord = null;
         Date planStartDate = null;
         Integer numberOfDays =0;
         String planValidDays ='';
-        system.debug('city'+objInsurance.ElixirSuite__Payer__r.ElixirSuite__City__c);
         String payorStreet = HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__Address__c,0) ;
         String payorCity =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__City__c,0) ;
         String payorState =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__State__c,0);
         String payorZipCode = HL7HelperClass.analyze(objInsurance.ElixirSuite__Payer__r.ElixirSuite__Zip_Code__c,0);
-        
         String insuredStreet = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Address__c,0) ;
         String insuredCity =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_City__c,0) ;
         String insuredState =  HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_State__c,0);
         String insuredZipCode = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Zipcode__c,0);
-        String insuredCountry = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_Country__c,0);
-        
-        if(HL7CodeMappings.getCountryCode(insuredCountry) != '')
-        {
-            
-            insuredCountry = HL7CodeMappings.getCountryCode(insuredCountry);
-        }
-        else
-        {
-            insuredCountry = '';
-        }
+        String insuredCountry = HL7HelperClass.analyze(HL7CodeMappings.getCountryCode(objInsurance.ElixirSuite__Insured_Country__c),0);
         
         List<ElixirSuite__Result__c> insuranceResults = new List<ElixirSuite__Result__c>();
         try {
@@ -91,7 +76,7 @@ public class HL7SegmentEncoderIN1 {
             }
             if(objInsurance.ElixirSuite__Date_Of_Birth__c!=null){
                 insuredDob = objInsurance.ElixirSuite__Date_Of_Birth__c;
-                formattedInsuredDob = HL7GeneralUtil.getDateTimeFormat(insuredDob); 
+                formattedInsuredDob = HL7GeneralUtil.getDateTimeFormat(insuredDob); //
             }
             String ssn = HL7HelperClass.analyze(objInsurance.ElixirSuite__Insured_SSN__c,0);
             String lastFourDigitsSSN = '';
@@ -102,7 +87,9 @@ public class HL7SegmentEncoderIN1 {
                     lastFourDigitsSSN = String.valueOf(lastFourDigits);
                 } catch (Exception ex) {
                     System.debug('Invalid SSN: ' + ssn);
-                    //  ExceptionLog.logError(ex);
+                    ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
+                    objExp.ElixirSuite__Stack_Trace_Long__c = 'Invalid SSN:'+ ex.getMessage();
+                    Insert objExp;
                 }
             }
             
@@ -110,19 +97,6 @@ public class HL7SegmentEncoderIN1 {
                 lastFourDigitsSSN = '';
             } else {
                 lastFourDigitsSSN = 'XXX-XX-' + lastFourDigitsSSN;
-            }
-            
-            System.debug('lastFourDigitsSSN: ' + lastFourDigitsSSN);
-            
-            genderCode = objInsurance.ElixirSuite__Gender__c != null ? objInsurance.ElixirSuite__Gender__c :'';
-            
-            if(HL7CodeMappings.getGenderCode(genderCode) != null)
-            {
-                genderCode = HL7CodeMappings.getGenderCode(genderCode);
-            }
-            else
-            {
-                genderCode = '';
             }
             
             //========================================Formation of the message
@@ -141,8 +115,9 @@ public class HL7SegmentEncoderIN1 {
             }
             
             IN1+= '|' ;
+            IN1+= '|'; 
             if(objInsurance.ElixirSuite__Payer__r.ElixirSuite__PhoneNumber__c!=null){
-                IN1+= '|' + objInsurance.ElixirSuite__Payer__r.ElixirSuite__PhoneNumber__c;
+                IN1+=   objInsurance.ElixirSuite__Payer__r.ElixirSuite__PhoneNumber__c;
                 System.debug('ElixirSuite__Phone_Number__c  ' +objInsurance.ElixirSuite__Payer__r.ElixirSuite__PhoneNumber__c);
             }
             IN1+= '|' + HL7HelperClass.analyze(objInsurance.ElixirSuite__Group_Number__c,0);
@@ -195,7 +170,7 @@ public class HL7SegmentEncoderIN1 {
             IN1+= '|';
             IN1+= '|';
             IN1+= '|';
-            IN1+= '|'+ genderCode;
+            IN1+= '|'+ HL7HelperClass.analyze(HL7CodeMappings.getGenderCode(objInsurance.ElixirSuite__Gender__c),1);
             IN1+= '|';
             String vobVerificationStatus = HL7HelperClass.analyze(objInsurance.ElixirSuite__VOB_Verification_Status__c, 0);
             if (vobVerificationStatus != null && vobVerificationStatus.equalsIgnoreCase('approved')) {
@@ -214,7 +189,7 @@ public class HL7SegmentEncoderIN1 {
             IN1+= '|';
             IN1+= '|';
             
-            
+            System.debug('HL7IN1Limits:'+Limits.getQueries());
         } catch (exception e) {
             System.debug('e.getMessage()'+e.getMessage());
             ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
@@ -222,7 +197,6 @@ public class HL7SegmentEncoderIN1 {
             Insert objExp;
             return '';
         }     
-        System.debug(IN1);
         return IN1;
     }
 }

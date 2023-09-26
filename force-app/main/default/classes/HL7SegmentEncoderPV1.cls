@@ -12,7 +12,7 @@ public class HL7SegmentEncoderPV1 {
         String formattedDischargeDate ='';
         try{
             List<ElixirSuite__Visits__c> careEpisode = HL7GeneralUtil.getCareEpisode(accountId, visitId);
-            
+            System.debug('HL7PV1Limits:'+Limits.getQueries());
             String pv1Segment =  'PV1';
             pv1Segment += '|';
             pv1Segment += '|O';

@@ -16,7 +16,8 @@ public class HL7SegmentEncoderPID {
         String deceasedFlag = isDeceased ? 'Y' : 'N';
         try{
             ssn = objAccount.ElixirSuite__SSN__c;
-            if (ssn.length() >= 4) {
+            System.debug(objAccount.ElixirSuite__SSN__c);
+            if (ssn != null && ssn.length() >= 4) {
                 try {
                     Integer lastFourDigits = Integer.valueOf(ssn.substring(ssn.length() - 4));
                     lastFourDigitsSSN = String.valueOf(lastFourDigits);
@@ -48,7 +49,7 @@ public class HL7SegmentEncoderPID {
                 System.debug('genderCode  '+genderCode);
             }
             else{
-                genderCode = 'O';
+                genderCode = 'U';
             }
             if(objAccount.ElixirSuite__Deceased__c==true && objAccount.ElixirSuite__Deceased_Date__c!=null){
                 Date dt = objAccount.ElixirSuite__Deceased_Date__c;
@@ -100,7 +101,7 @@ public class HL7SegmentEncoderPID {
             strPID += '|' + ''; //strain
             strPID += '|' + ''; //production class code
             strPID += '|' ; //tribal citizenship
-            
+            System.debug('HL7PIDLimits:'+Limits.getQueries());
             return strPID +'\n';
         } catch (Exception e) {
             System.debug('Exception occurred in HL7 PID Segment: ' + e.getMessage());

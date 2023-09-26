@@ -5,7 +5,6 @@ public class HL7CodeMappings {
         'United States' => 'US',
             'Canada' => 'CA',
             'United Kingdom' => 'UK'
-            // Add more country mappings here
             };
      // Gender Codes
      public static final Map<String, String> GENDER_CODES = new Map<String, String>{

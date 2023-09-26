@@ -19,7 +19,7 @@ public class HL7SegmentEncoderDG1 {
             }
             return strDG1;
         }catch (Exception e) {
-            //ExceptionLog.logDebugString('Exception occurred in HL7  DG1 Segment: ' + e.getMessage());
+            System.debug('Exception occurred in HL7  DG1 Segment: ' + e.getMessage());
             return '';
         }
     }  
@@ -29,39 +29,36 @@ public class HL7SegmentEncoderDG1 {
         
         //================================Formation of message 
         try{
-            if(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Version__c == 'ICD 10'){
-                version = 'I10';
-            }else if(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Version__c == 'ICD 9'){
-                version = 'I9';
-            }
             if(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Version__c == null || objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Diagnosis_Type__c == null){                 
-                //  ExceptionLog.logDebugString('Unable to generate strDG1 message due to required fields missing: [Version, Diagnosis type]');
                 ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
                 objExp.ElixirSuite__Stack_Trace_Long__c = 'Unable to generate strDG1 message due to required fields missing: [Version, Diagnosis type]';
                 Insert objExp;                    
                 return '';
             }
-            
-            else{
-                String strDG1 = 'DG1';
-                strDG1 += '|' + counter ;// setId
-                strDG1 += '||' + HL7HelperClass.analyze(objICDCodes.ElixirSuite__Diagnosis_Code__r.Name, 0) + '^'  
-                    + HL7HelperClass.analyze(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Code_Description1__c, 0) + '^' 
-                    + HL7HelperClass.analyze(version, 0) ;  //  Diagnosis Code - Dg1
-                strDG1 += '||' + HL7HelperClass.analyze(HL7GeneralUtil.getDateTimeFormat(objICDCodes.ElixirSuite__Problem__r.ElixirSuite__Date_Diagonised__c),0);//Diagnosis Date/Time  
-                strDG1 += '|'  +'^'+ HL7HelperClass.analyze(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Diagnosis_Type__c,0);
-                System.debug(strDG1);
-                return strDG1;                
-            }
+                else{
+                    if(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Version__c == 'ICD 10'){
+                        version = 'I10';
+                    }else if(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Version__c == 'ICD 9'){
+                        version = 'I9';
+                    }
+                    
+                    String strDG1 = 'DG1';
+                    strDG1 += '|' + counter ;// setId
+                    strDG1 += '||' + HL7HelperClass.analyze(objICDCodes.ElixirSuite__Diagnosis_Code__r.Name, 20) + '^'  
+                        + HL7HelperClass.analyze(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Code_Description1__c, 199) + '^' 
+                        + HL7HelperClass.analyze(version, 20) ;  //  Diagnosis Code - Dg1
+                    strDG1 += '||' + HL7HelperClass.analyze(HL7GeneralUtil.getDateTimeFormat(objICDCodes.ElixirSuite__Problem__r.ElixirSuite__Date_Diagonised__c),26);//Diagnosis Date/Time  
+                    strDG1 += '|'  + HL7HelperClass.analyze(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Diagnosis_Type__c,0);
+                    System.debug(strDG1);
+                    return strDG1;                
+                }
             
         }catch (exception e) {          
-            //ExceptionLog.logDebugString('Exception occurred in HL7 DG1 Record Segment: ' + e.getMessage()); 
             System.Debug('Exception Message in DG1'+e.getMessage());
             ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
             objExp.ElixirSuite__Stack_Trace_Long__c = 'Exception occurred in HL7 DG1 Segment:'+ e.getMessage();
             Insert objExp;          
             return '';
-            
         }
     }
 }
