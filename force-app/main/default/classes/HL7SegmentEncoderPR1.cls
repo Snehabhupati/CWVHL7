@@ -21,7 +21,7 @@ public class HL7SegmentEncoderPR1 {
         String ProcedureCode='';
         
         try {
-            //========================================Formation of the message
+            //=========================================Formation of the message
             PR1+='PR1';
             PR1+= '|' + counter; //Set ID
             PR1+= '|' ; //Procedure Coding Method

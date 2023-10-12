@@ -31,7 +31,7 @@ public class HL7StagingProcessingBatch implements Database.Batchable<sObject>, D
         if(res.getStatusCode() == 200){
             accessTokenWrapper accessToken =  (accessTokenWrapper) System.JSON.deserialize(res.getBody(), accessTokenWrapper.class);
             System.debug('accessToken ' +accessToken);
-            return(accessTokenWrapper) System.JSON.deserialize(res.getBody(), accessTokenWrapper.class);
+            return accessToken;
         }
         else{
             return null;
@@ -45,10 +45,8 @@ public class HL7StagingProcessingBatch implements Database.Batchable<sObject>, D
             record.IsProcessed__c = true;
             record.Processed_Date__c = System.now();
         }
-        
+        //get AccessToken
         accessTokenWrapper objAccecc = HL7StagingProcessingBatch.generateAccessToken();
-        
-       //  = generateAccessToken();
         
         system.debug('objAccecc-'+objAccecc);
         system.debug('objAccecc.access_token-'+objAccecc.access_token);
@@ -57,6 +55,7 @@ public class HL7StagingProcessingBatch implements Database.Batchable<sObject>, D
             
             HttpRequest req = new HttpRequest();
             req.setEndpoint('https://cgpowerindustrialpvtltd3-dev-ed.my.salesforce.com/services/apexrest/Hl7/insertHL7Messages');
+            //req.setEndpoint('https://test.crisphealth.org/mirketa_dc/adt');
             req.setMethod('POST');
             req.setBody(requestBody);
             req.setHeader('Authorization', 'Bearer ' + objAccecc.access_token);

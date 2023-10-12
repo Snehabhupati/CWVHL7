@@ -29,7 +29,7 @@ public class HL7SegmentEncoderDG1 {
         
         //================================Formation of message 
         try{
-            if(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Version__c == null || objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Diagnosis_Type__c == null){                 
+            if(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Version__c == null){                 
                 ElixirSuite__Exception_Log__c objExp = new ElixirSuite__Exception_Log__c();
                 objExp.ElixirSuite__Stack_Trace_Long__c = 'Unable to generate strDG1 message due to required fields missing: [Version, Diagnosis type]';
                 Insert objExp;                    
@@ -48,7 +48,7 @@ public class HL7SegmentEncoderDG1 {
                         + HL7HelperClass.analyze(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Code_Description1__c, 199) + '^' 
                         + HL7HelperClass.analyze(version, 20) ;  //  Diagnosis Code - Dg1
                     strDG1 += '||' + HL7HelperClass.analyze(HL7GeneralUtil.getDateTimeFormat(objICDCodes.ElixirSuite__Problem__r.ElixirSuite__Date_Diagonised__c),26);//Diagnosis Date/Time  
-                    strDG1 += '|'  + HL7HelperClass.analyze(objICDCodes.ElixirSuite__Diagnosis_Code__r.ElixirSuite__Diagnosis_Type__c,0);
+                    strDG1 += '|'  + 'F';
                     System.debug(strDG1);
                     return strDG1;                
                 }

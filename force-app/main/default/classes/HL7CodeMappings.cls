@@ -1,8 +1,7 @@
+//Storing all the Code values
 public class HL7CodeMappings {
- 
     public static final String 	SendingApplication = 'Elixir'; 
     public static final String SendingFacility = 'Community Wellness'; 
-    
     public static String getGenderCode(String genderCode) {
         switch on (genderCode) {
             when 'Female' { return 'F'; }
@@ -23,7 +22,8 @@ public class HL7CodeMappings {
     }
     public static String getRaceCode(String race) {
         switch on (race) {
-            when 'Black or African American' { return '2054-5'; }
+            when 'Black or African American'
+            { return '2054-5'; }
             when 'Asian/Pacific Islander' { return '2028-9'; }
             when 'White' { return '2106-3'; }
             when 'Other Race' { return '2131-1'; }
@@ -38,4 +38,5 @@ public class HL7CodeMappings {
             when else { return 'U'; }
         }
     }
+
 }
